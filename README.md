@@ -1,6 +1,6 @@
 # Grafika komputerowa 2023/2024 - zima
 
-## Piramida Sierpińskiego - Wersja na 4.5
+## Piramida Sierpińskiego - Wersja na 4.5 - Aktualny stan wykonania!
 ### Start: 3.0
 
 - 3 poziomy ✔️
