@@ -5,7 +5,7 @@
 
 - 3 poziomy ✔️
 - obraca się powoli ✔️
-- światło - 2 źródła: kierunkowe i punktowe ❌
+- światło - 2 źródła: kierunkowe i punktowe ✔️
 - możliwość przesuwania kamery i zoom'owanie ✔️
 - tekstury, które można włączyć i wyłączyć klawiszem ✔️
 
@@ -15,7 +15,7 @@
 
 ### +0.5
 
-- można modyfikowac punktowe światło za pomocą klawiatury (ruszac/kolory zmieniać) ❌
+- można modyfikowac punktowe światło za pomocą klawiatury (ruszac/kolory zmieniać) ✔️
 - piramida stoi na podłożu ✔️
 
 ### +0.5
