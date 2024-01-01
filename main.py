@@ -46,12 +46,10 @@ def draw_ground(size, texture_id):
 def set_lights(directional_position, point_position, point_color):
     glEnable(GL_LIGHTING)
 
-    # Directional light properties (left side, white)
     glLightfv(GL_LIGHT0, GL_POSITION, directional_position)
     glLightfv(GL_LIGHT0, GL_DIFFUSE, (1.0, 1.0, 1.0, 1.0))
     glEnable(GL_LIGHT0)
 
-    # Point light properties
     glLightfv(GL_LIGHT1, GL_POSITION, point_position)
     glLightfv(GL_LIGHT1, GL_DIFFUSE, point_color)
     glEnable(GL_LIGHT1)
@@ -60,7 +58,6 @@ def set_lights(directional_position, point_position, point_color):
 def draw_pyramid(x, y, z, a, colored):
     half = a
 
-    # bottom face
     glBegin(GL_POLYGON if colored else GL_LINE_LOOP)
     glColor3f(1, 0, 0) if colored else glColor3f(1, 0, 0)
     glVertex3f(x - half, y - half, z - half)
@@ -109,14 +106,14 @@ def main():
     pygame.init()
     display = (1200, 800)
     pygame.display.set_mode(display, DOUBLEBUF | OPENGL)
-    pygame.key.set_repeat(200, 10)  # Increased delay between key repeats
+    pygame.key.set_repeat(200, 10)
     pygame.display.set_caption('PiramidShow')
     gluPerspective(45, (display[0] / display[1]), 0.1, 50.0)
     glTranslatef(0.0, 0, -10)
     last_pos_x = 0
     last_pos_y = 0
-    colored = [False]  # Use a list to store the coloring state
-    iterations = [3]  # Use a list to store the number of iterations
+    colored = [True]
+    iterations = [1]
     angle = 0.1
 
     directional_position = (-1, 0, 0, 0)
@@ -124,6 +121,10 @@ def main():
     point_color = (1.0, 1.0, 1.0, 1.0)
 
     set_lights(directional_position, point_position, point_color)
+
+    current_bg_color = (0.0, 0.0, 0.0)
+    color_transition_speed = 0.001
+    color_transition_forward = True
 
     ground_texture = load_texture("grass.jpg")
     while True:
@@ -143,9 +144,9 @@ def main():
                     glRotatef(1, 1, 0, 0)
                 if event.key == pygame.K_v:
                     colored[0] = not colored[0]
-                if event.key == pygame.K_w and iterations[0] < 6:  # Increase iterations with 'w'
+                if event.key == pygame.K_w and iterations[0] < 6:
                     iterations[0] += 1
-                if event.key == pygame.K_s and iterations[0] > 1:  # Decrease iterations with 's'
+                if event.key == pygame.K_s and iterations[0] > 1:
                     iterations[0] -= 1
                 if event.key == pygame.K_p:  # Zmiana koloru światła na pomarańczowy
                     point_color = (1.0, 0.5, 0.0, 1.0)
@@ -192,12 +193,27 @@ def main():
                 last_pos_x = x
                 last_pos_y = y
 
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+        if color_transition_forward:
+            current_bg_color = (
+                current_bg_color[0] + (0.5 - current_bg_color[0]) * color_transition_speed,
+                current_bg_color[1] + (0.7 - current_bg_color[1]) * color_transition_speed,
+                current_bg_color[2] + (1.0 - current_bg_color[2]) * color_transition_speed
+            )
+            if all(value > 0.46 for value in current_bg_color):
+                color_transition_forward = False
+        else:
+            current_bg_color = (
+                current_bg_color[0] - (current_bg_color[0] - 0.0) * color_transition_speed,
+                current_bg_color[1] - (current_bg_color[1] - 0.0) * color_transition_speed,
+                current_bg_color[2] - (current_bg_color[2] - 0.0) * color_transition_speed
+            )
+            if all(value < 0.01 for value in current_bg_color):
+                color_transition_forward = True
 
-        # Draw ground
+        glClearColor(*current_bg_color, 1.0)
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         draw_ground(70, ground_texture)
 
-        # Draw pyramid
         glPushMatrix()
         sierpinski_pyramid(0, 0, 0, iterations[0], 2, colored[0])
         glPopMatrix()
