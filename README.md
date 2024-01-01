@@ -20,4 +20,4 @@
 
 ### +0.5
 
-- wokół piramidy porusza się sfera, który symuluje dzień/noc ❌
+- wokół piramidy porusza się sfera, który symuluje dzień/noc ✔️
