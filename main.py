@@ -102,7 +102,45 @@ def sierpinski_pyramid(x, y, z, iterations, length, colored):
         draw_pyramid(x, y, z, length, colored)
 
 
+def move_point_light(key):
+    global point_position
+    step = 0.1  # Krok przesunięcia światła punktowego
+
+    if key == pygame.K_LEFT:
+        point_position[0] -= step
+    elif key == pygame.K_RIGHT:
+        point_position[0] += step
+    elif key == pygame.K_UP:
+        point_position[1] += step
+    elif key == pygame.K_DOWN:
+        point_position[1] -= step
+
+    glLightfv(GL_LIGHT1, GL_POSITION, point_position)
+
+
+def adjust_point_light_color(key):
+    global point_color
+    if key == pygame.K_p:
+        point_color = (1.0, 0.5, 0.0, 1.0)  # Pomarańczowy
+    elif key == pygame.K_r:
+        point_color = (1.0, 0.0, 1.0, 1.0)  # Różowy
+    elif key == pygame.K_n:
+        point_color = (0.0, 0.0, 1.0, 1.0)  # Niebieski
+    elif key == pygame.K_z:
+        point_color = (0.0, 1.0, 0.0, 1.0)  # Zielony
+    elif key == pygame.K_c:
+        point_color = (1.0, 0.0, 0.0, 1.0)  # Czerwony
+    elif key == pygame.K_f:
+        point_color = (0.5, 0.0, 1.0, 1.0)  # Fiolet
+    glLightfv(GL_LIGHT1, GL_DIFFUSE, point_color)
+
+
 def main():
+    global point_color
+    global point_position
+    directional_position = (-1, 0, 0, 0)
+    point_position = [0, 0, 0, 1]
+    point_color = (1.0, 1.0, 1.0, 1.0)
     pygame.init()
     display = (1200, 800)
     pygame.display.set_mode(display, DOUBLEBUF | OPENGL)
@@ -115,10 +153,6 @@ def main():
     colored = [True]
     iterations = [1]
     angle = 0.1
-
-    directional_position = (-1, 0, 0, 0)
-    point_position = (0, 0, 0, 1)
-    point_color = (1.0, 1.0, 1.0, 1.0)
 
     set_lights(directional_position, point_position, point_color)
 
@@ -134,13 +168,13 @@ def main():
                 quit()
 
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_LEFT:
+                if event.key == pygame.K_KP4:
                     glRotatef(1, 0, 1, 0)
-                if event.key == pygame.K_RIGHT:
+                if event.key == pygame.K_KP6:
                     glRotatef(1, 0, -1, 0)
-                if event.key == pygame.K_UP:
+                if event.key == pygame.K_KP8:
                     glRotatef(1, -1, 0, 0)
-                if event.key == pygame.K_DOWN:
+                if event.key == pygame.K_KP5:
                     glRotatef(1, 1, 0, 0)
                 if event.key == pygame.K_v:
                     colored[0] = not colored[0]
@@ -148,24 +182,8 @@ def main():
                     iterations[0] += 1
                 if event.key == pygame.K_s and iterations[0] > 1:
                     iterations[0] -= 1
-                if event.key == pygame.K_p:  # Zmiana koloru światła na pomarańczowy
-                    point_color = (1.0, 0.5, 0.0, 1.0)
-                    glLightfv(GL_LIGHT1, GL_DIFFUSE, point_color)
-                if event.key == pygame.K_r:  # Zmiana koloru światła na różowy
-                    point_color = (1.0, 0.0, 1.0, 1.0)
-                    glLightfv(GL_LIGHT1, GL_DIFFUSE, point_color)
-                if event.key == pygame.K_n:  # Zmiana koloru światła na niebieski
-                    point_color = (0.0, 0.0, 1.0, 1.0)
-                    glLightfv(GL_LIGHT1, GL_DIFFUSE, point_color)
-                if event.key == pygame.K_z:  # Zmiana koloru światła na zielony
-                    point_color = (0.0, 1.0, 0.0, 1.0)
-                    glLightfv(GL_LIGHT1, GL_DIFFUSE, point_color)
-                if event.key == pygame.K_c:  # Zmiana koloru światła na czerwony
-                    point_color = (1.0, 0.0, 0.0, 1.0)
-                    glLightfv(GL_LIGHT1, GL_DIFFUSE, point_color)
-                if event.key == pygame.K_f:  # Zamiana koloru światła na fiolet
-                    point_color = (0.5, 0.0, 1.0, 1.0)
-                    glLightfv(GL_LIGHT1, GL_DIFFUSE, point_color)
+                adjust_point_light_color(event.key)
+                move_point_light(event.key)
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 4:
